@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#define INT_FAST32_MAX INT32_MAX
 
 #define BUFFER_SIZE 80
 char buffer[BUFFER_SIZE];
@@ -8,6 +9,9 @@ char buffer[BUFFER_SIZE];
 int main(int argc, char *argv[])
 {
     int fd = STDIN_FILENO; // file descriptor
+    int num_lines = INT_FAST32_MAX;// will work for files up to 2b lines
+
+
 
     if (argc > 1) {
         fd = open(argv[1], O_RDONLY);
@@ -17,9 +21,19 @@ int main(int argc, char *argv[])
         }
     }
     ssize_t bytes_read;
-    while ((bytes_read = read(fd, buffer, BUFFER_SIZE))) {
-        write (STDOUT_FILENO, buffer, bytes_read);
+    if(argc > 2) {
+        num_lines = atoi(argv[2]);
+        for  (int i = 1; i < num_lines; i ++) {
+            bytes_read = read(fd, buffer, BUFFER_SIZE) && 
+            write (STDOUT_FILENO, buffer, bytes_read);
     }
+    } else {
+        while ((bytes_read = read(fd, buffer, BUFFER_SIZE))) {
+            write (STDOUT_FILENO, buffer, bytes_read);
+        }   
+    }
+
+
 
     close(fd);
 }
