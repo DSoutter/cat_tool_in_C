@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <stdio.h>
 #define INT_FAST32_MAX INT32_MAX
 
 #define BUFFER_SIZE 80
@@ -23,10 +24,17 @@ int main(int argc, char *argv[])
     ssize_t bytes_read;
     if(argc > 2) {
         num_lines = atoi(argv[2]);
-        for  (int i = 1; i < num_lines; i ++) {
-            bytes_read = read(fd, buffer, BUFFER_SIZE) && 
-            write (STDOUT_FILENO, buffer, bytes_read);
+
+        char *line = NULL;
+        size_t len = 0;
+        ssize_t read;
+        FILE *file = fopen(argv[1], "r");
+    for (int i = 0; i < num_lines; i++) {
+        read = getline(&line, &len, file);
+        write(STDOUT_FILENO, line, read);
     }
+
+    free(line);
     } else {
         while ((bytes_read = read(fd, buffer, BUFFER_SIZE))) {
             write (STDOUT_FILENO, buffer, bytes_read);
