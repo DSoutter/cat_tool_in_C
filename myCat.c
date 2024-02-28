@@ -7,6 +7,7 @@ char buffer[BUFFER_SIZE];
 int main()
 {
     ssize_t bytes_read;
-    bytes_read = read(0, buffer, BUFFER_SIZE);
-    write (1, buffer, bytes_read);
+    while ((bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE))) {
+        write (STDOUT_FILENO, buffer, bytes_read);
+    };
 }
